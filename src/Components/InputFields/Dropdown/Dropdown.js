@@ -15,7 +15,7 @@ const CustomDropdown = ({f, onChange, value = ''}) => {
             </div>
             <div>
                 {f.showDescription &&
-                    <p style={{fontSize: 'small'}}>{f.description}</p>}
+                    <p style={{fontSize: 'small'}}>{f.description}<span style={{color: 'red'}}>{f.required && !f.showFieldName ? '*' : ''}</span></p>}
             </div>
             <div>
                 <select id={f.field_label} name={f.field_label} onChange={(e) => onChange(e, f)} style={{padding: '5px', outline: 'none', borderRadius: '5px', width: '200px', border: '1px solid black'}}>

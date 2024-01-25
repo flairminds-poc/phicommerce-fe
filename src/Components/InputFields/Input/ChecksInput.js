@@ -9,7 +9,7 @@ const ChecksInput = ({f, onChange, value = []}) => {
 
     return(
         <div>
-            <div><label style={{fontSize: 'small'}}>{labelText}</label></div>
+            <div><label style={{fontSize: 'small'}}>{labelText}<span style={{color: 'red'}}>{f.required ? '*' : ''}</span></label></div>
             <div>
                 {f.options.map(fo => {
                     return (

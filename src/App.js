@@ -1,5 +1,5 @@
 import './App.css';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { data, tabs } from './data';
 import { InputFields } from './Components/InputFields';
 import CustomButton from './Components/Elements/Button';
@@ -7,12 +7,23 @@ import CustomButton from './Components/Elements/Button';
 function App() {
 
 	const [sampleData, setSampleData] = useState({});
+	const [formTabs, setFormTabs] = useState([]);
+	const [tabFields, setTabFields] = useState([]);
 	const [step, setStep] = useState(1);
+	const [errors, setErrors] = useState([]);
+
+	useEffect(() => {
+		setFormTabs(tabs.tabs.sort((a, b) => a.order - b.order))
+		setTabFields(data.fields.sort((a, b) => a.order - b.order))
+	}, [])
 
 	const handleOnChange = (e, f) => {
+		setErrors([])
 		if (f.regex_validation) {
 			let regexV = new RegExp(f.regex_validation)
-			console.log(regexV.test(e.target.value))
+			if(!regexV.test(e.target.value)) {
+				// err.push(`Validation failed for ${f.field_label}.`)
+			}
 		}
 		let temp = sampleData;
 		if (e.target.value && e.target.value !== '') {
@@ -25,8 +36,13 @@ function App() {
 				delete temp[f.field_label]
 			}
 		}
+		// setErrors(err)
 		setSampleData(temp)
 	}
+
+	useEffect(() => {
+		console.log(sampleData);
+	}, [sampleData])
 
 	const handleCheckboxOnChange = (e, f) => {
 		let temp = sampleData;
@@ -45,21 +61,40 @@ function App() {
 
 	const handleOnClick = (e, t) => {
 		e.preventDefault()
-		let error = false
-		const thisTabFields = data.fields.filter(f => f.tab === t.id)
+		if (errors.length > 0) return
+		let err = errors
+		const thisTabFields = tabFields.filter(f => f.tab === t.id)
 		const thisTabFieldsArr = Object.keys(sampleData)
 		thisTabFields.forEach(ttf => {
-			if (ttf.required && !thisTabFieldsArr.includes(ttf.field_label)) {
-				error = true
-				console.log(`${ttf.field_label} field is required.`)
+			// check regex validation
+			if (sampleData[ttf.field_label] && ttf.regex_validation) {
+				let regexV = new RegExp(ttf.regex_validation)
+				if(!regexV.test(sampleData[ttf.field_label])) {
+					err.push(`Validation failed for ${ttf.field_label}.`)
+				}
+			}
+			// check other validations
+			if (sampleData[ttf.field_label] && ttf.validation) {
+				for (let j = 0; j < ttf.validation.length; j++) {
+					let v = ttf.validation[j]
+					if (v.type === 'equals') {
+						if (v.field_label) {
+							if (sampleData[ttf.field_label] !== sampleData[v.field_label]) {
+								err.push(`${ttf.field_label} is not equal to ${v.field_label}`)
+							}
+						}
+					}
+				}
+			}
+			if (ttf.required && prereqSatisfied(ttf) && !thisTabFieldsArr.includes(ttf.field_label)) {
+				err.push(`${ttf.field_label} field is required.`)
 			}
 		})
-		if (error) {
-			console.log('errors found')
+		setErrors([...err])
+		if (err.length > 0) {
 			return
 		}
 		setStep(t.id + 1)
-		console.log(sampleData)
 	}
 
 	const prereqSatisfied = (f) => {
@@ -67,7 +102,7 @@ function App() {
 		if (f.preRequisites) {
 			for (let i = 0; i < f.preRequisites.length; i++) {
 				let p = f.preRequisites[i]
-				if (Object.keys(sampleData).includes(p.field_label) && sampleData[p.field_label] === p.value ) {
+				if (Object.keys(sampleData).includes(p.field_label) && (sampleData[p.field_label] === p.value || sampleData[p.field_label].includes(p.value))) {
 					flag = true
 				} else {
 					flag = false
@@ -79,15 +114,16 @@ function App() {
 	}
 
 	return (
-		<div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh'}}>
-			{tabs.tabs.map(t => {
+		<div style={{display: 'flex', justifyContent: 'center', alignItems: 'flex-start', height: '100vh'}}>
+			{formTabs && formTabs.map(t => {
 				return (
 					<>
 						{step === t.id && 
-							<div style={{padding: '50px', borderRadius: '5px', border: '1px solid grey', width: '400px', height: '600px'}}>
+							<div style={{padding: '40px 70px', borderRadius: '5px', border: '1px solid grey', margin: '25px 0', width: '500px', minHeight: '600px'}}>
 							{t.name}
+							<div style={{fontStyle: 'italic', fontSize: 'small', padding: '10px 0 0 0'}}>Fields marked with asterisk(*) are compulsory.</div>
 							<form>
-								{data.fields.filter(temp => temp.tab === t.id).map(f => {
+								{tabFields.filter(temp => temp.tab === t.id).map(f => {
 									return (
 										<>
 											{f.showField && prereqSatisfied(f) &&
@@ -101,9 +137,19 @@ function App() {
 										</>
 									)
 								})}
-								<div style={{display: 'flex', justifyContent: 'space-between'}}>
-									<CustomButton text={'Back'} onClick={() => setStep(t.id - 1)} />
-									<CustomButton text={'Next'} onClick={(e) => handleOnClick(e, t)} />
+								{errors && errors.length > 0 &&
+									<div style={{color: 'red'}}>
+										<ul>
+											{errors.map(e => {
+												return (
+													<li>{e}</li>
+												)
+											})}
+										</ul>
+									</div>}
+								<div style={{display: 'flex', justifyContent: 'space-between', marginTop: '25px'}}>
+									<CustomButton text={'Back'} onClick={() => {setErrors([]); setStep(t.id - 1)}} />
+									<CustomButton text={t.id === formTabs.length ? 'Submit' : 'Next'} onClick={(e) => handleOnClick(e, t)} />
 								</div>
 							</form>
 						</div>}

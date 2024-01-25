@@ -1,13 +1,16 @@
 export const tabs = {
     tabs: [{
         id: 1,
-        name: 'Tab 1'
+        name: 'Tab 1',
+        order: 1
     }, {
         id: 2,
-        name: 'Tab 2'
+        name: 'Tab 3',
+        order: 3
     }, {
         id: 3,
-        name: 'Tab 3'
+        name: 'Tab 2',
+        order: 2
     }]
 }
 
@@ -15,11 +18,12 @@ export const data = {
     fields: [{
         id: 1,
         tab: 1,
+        order: 1,
         field_label: 'first_name',
-        description: '',
+        description: '[Validation: Only alphabets]',
         showFieldName: true,
         showField: true,
-        showDescription: false,
+        showDescription: true,
         input_type: 'text',
         required: true,
         regex_validation: '^[a-zA-Z]+$',    // this is to checked runtime or on submit
@@ -27,21 +31,28 @@ export const data = {
             endpoint: '',
             success_response: '',
             error_response: ''
+        },
+        error_msgs: {
+            validation: 'Validation failed for First name.',
+            regex_validation: 'First name can only be alphabets',
+            required: 'First name is required'
         }
     }, {
         id: 2,
         tab: 1,
+        order: 2,
         field_label: 'last_name',
-        description: '',
+        description: '[Validation: Only alphabets]',
         showField: true,
         showFieldName: true,
-        showDescription: false,
+        showDescription: true,
         input_type: 'text',
         required: true,
         regex_validation: '^[a-zA-Z]+$'
     }, {
         id: 5,
         tab: 1,
+        order: 4,
         field_label: 'languages',
         description: '',
         showField: true,
@@ -53,6 +64,7 @@ export const data = {
     }, {
         id: 6,
         tab: 1,
+        order: 3,
         field_label: 'gender',
         description: '',
         showField: true,
@@ -64,6 +76,7 @@ export const data = {
     }, {
         id: 7,
         tab: 1,
+        order: 6,
         field_label: 'education',
         description: 'Select your education level',
         showField: true,
@@ -75,6 +88,7 @@ export const data = {
     }, {
         id: 8,
         tab: 1,
+        order: 7,
         field_label: 'citizenship',
         description: 'Select your education level',
         showField: true,
@@ -86,24 +100,22 @@ export const data = {
     }, {
         id: 9,
         tab: 1,
-        field_label: 'state',
-        description: '',
+        order: 5,
+        field_label: 'language',
+        description: 'please specify',
         showField: true,
-        showFieldName: true,
-        showDescription: false,
-        input_type: 'select',
+        showFieldName: false,
+        showDescription: true,
+        input_type: 'text',
         required: false,
-        options: ['Gujarat', 'Maharashtra', 'Karnataka'],
         preRequisites: [{
-            field_label: 'citizenship',
-            value: 'Indian'
-        }, {
-            field_label: 'gender',
-            value: 'male'
+            field_label: 'languages',
+            value: 'others'
         }]
     }, {
         id: 10,
         tab: 3,
+        order: 1,
         field_label: 'country',
         description: '',
         showField: true,
@@ -117,8 +129,25 @@ export const data = {
             value: 'Non-Indian'
         }]
     }, {
+        id: 11,
+        tab: 3,
+        order: 2,
+        field_label: 'state',
+        description: '',
+        showField: true,
+        showFieldName: true,
+        showDescription: false,
+        input_type: 'select',
+        required: true,
+        options: ['Gujarat', 'Maharashtra', 'Karnataka'],
+        preRequisites: [{
+            field_label: 'citizenship',
+            value: 'Indian'
+        }]
+    }, {
         id: 3,
         tab: 2,
+        order: 1,
         field_label: 'password',
         input_type: 'password',
         showField: true,
@@ -128,11 +157,16 @@ export const data = {
     }, {
         id: 4,
         tab: 2,
+        order: 2,
         field_label: 'confirm_password',
         input_type: 'password',
         showField: true,
         showFieldName: true,
         showDescription: false,
-        required: true
+        required: true,
+        validation: [{
+            type: 'equals',
+            field_label: 'password'
+        }]
     }]
 }
