@@ -15,7 +15,7 @@ function App() {
 			console.log(regexV.test(e.target.value))
 		}
 		let temp = sampleData;
-		if (e.target.value && e.target.value != '') {
+		if (e.target.value && e.target.value !== '') {
 			temp = {
 				...temp,
 				[f.field_label]: e.target.value
@@ -63,7 +63,6 @@ function App() {
 	}
 
 	const prereqSatisfied = (f) => {
-		const temp =sampleData
 		let flag = true
 		if (f.preRequisites) {
 			for (let i = 0; i < f.preRequisites.length; i++) {
