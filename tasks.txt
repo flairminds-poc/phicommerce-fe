@@ -1,1 +1,14 @@
-1. mandatory if a particular field is of any particular value
+Done -
+1. Input fields to be rendered dynamically in forms
+2. Labels and descriptions of input fields to be rendered dynamically
+3. Input fields to be rendered in different tabs in order
+4. Regex validation for input fields
+5. Field dependency of input fields - A particular field should open only if the pre-requisite condition is fulfilled
+6. Specify and validate mandotry fields
+7. Cannot go to next tab if any validation fails
+8. Retain the form data throughout the application
+9. Fields to be shown/hidden based on a flag
+
+Pending -
+1. validation based on condition - if a particular field is of any particular value
+2. mandatory based on condition - if a particular field is of any particular value
