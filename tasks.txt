@@ -8,10 +8,10 @@ Done -
 7. Cannot go to next tab if any validation fails
 8. Retain the form data throughout the application
 9. Fields to be shown/hidden based on a flag
+10. dependency field in same tab
 
 Pending -
 1. validation based on condition - if a particular field is of any particular value
-2. mandatory based on condition - if a particular field is of any particular value
+2. mandatory based on condition - if a particular field is of any particular value or fulfills dependency conditions
 3. dependency in fields - populate dropdown based on a selection of other field
-4. dependency field in same tab
-5. multiple dependencies, e.g. (education = grad OR education=post-grad) AND country=india, then show specialization field
+4. multiple dependencies, e.g. (education = grad OR education=post-grad) AND country=india, then show specialization field
