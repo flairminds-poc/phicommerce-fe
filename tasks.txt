@@ -15,3 +15,6 @@ Pending -
 2. mandatory based on condition - if a particular field is of any particular value or fulfills dependency conditions
 3. dependency in fields - populate dropdown based on a selection of other field
 4. multiple dependencies, e.g. (education = grad OR education=post-grad) AND country=india, then show specialization field
+
+validations can be and-or conbinations
+dependencies can be and-or combinations
