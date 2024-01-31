@@ -1,20 +1,19 @@
-export const tabs = {
+export const form = {
+    form_type: 'Credit Card Form',
+    bank_name: 'HDFC',
     tabs: [{
         id: 1,
-        name: 'Tab 1',
+        name: 'Personal Details',
         order: 1
     }, {
         id: 2,
-        name: 'Tab 3',
-        order: 3
+        name: 'Create Password',
+        order: 2
     }, {
         id: 3,
-        name: 'Tab 2',
-        order: 2
-    }]
-}
-
-export const data = {
+        name: 'Tab 3',
+        order: 3
+    }],
     fields: [{
         id: 1,
         tab: 1,
@@ -27,16 +26,12 @@ export const data = {
         input_type: 'text',
         required: true,
         regex_validation: '^[a-zA-Z]+$',    // this is to checked runtime or on submit
-        service_validation: {   // service api endpoint to be called from backend on submit
-            endpoint: '',
-            success_response: '',
-            error_response: ''
-        },
-        error_msgs: {
-            validation: 'Validation failed for First name.',
-            regex_validation: 'First name can only be alphabets',
-            required: 'First name is required'
-        }
+        validation: [{
+            key: 'regex_check',
+            type: 'equal',
+            value: '^[a-zA-Z]+$',
+            error_message: 'First name can only have characters.'
+        }]
     }, {
         id: 2,
         tab: 1,
@@ -48,7 +43,40 @@ export const data = {
         showDescription: true,
         input_type: 'text',
         required: true,
-        regex_validation: '^[a-zA-Z]+$'
+        validation: [{
+            key: 'regex_check',
+            type: 'equal',
+            value: '^[a-zA-Z]+$',
+            error_message: 'Last name can only have characters.'
+        }]
+    }, {
+        id: 3,
+        tab: 1,
+        order: 2,
+        field_label: 'age',
+        description: '[18 - 70 years]',
+        showField: true,
+        showFieldName: true,
+        showDescription: true,
+        input_type: 'text',
+        required: true,
+        validation: [{
+            key: 'regex_check',
+            type: 'equal',
+            value: '^[0-9]+$',
+            error_message: 'Age can only be an integer.'
+        }, {
+            logic: 'and',
+            key: 'value_check',
+            type: 'greater',
+            value: '18',
+            error_message: 'Age has to be greater than 18.'
+        }, {
+            logic: 'and',
+            type: 'lesser',
+            value: '70',
+            error_message: 'Age has to be lesser than 70.'
+        }]
     }, {
         id: 5,
         tab: 1,
@@ -89,6 +117,70 @@ export const data = {
         id: 8,
         tab: 1,
         order: 7,
+        field_label: 'Board',
+        description: 'Select your education level',
+        showField: true,
+        showFieldName: true,
+        showDescription: false,
+        input_type: 'select',
+        required: true,
+        options: ['CBSE', 'ICSE', 'Maharashtra'],
+        preRequisites: [{
+            field_label: 'education',
+            value: '10th pass'
+        }, {
+            field_label: 'education',
+            value: '12th pass',
+            logic: 'or'
+        }, {
+            field_label: 'citizenship',
+            value: 'Indian',
+            logic: 'and'
+        }]
+    }, {
+        id: 8,
+        tab: 1,
+        order: 7,
+        field_label: 'Specialization',
+        description: '',
+        showField: true,
+        showFieldName: true,
+        showDescription: false,
+        input_type: 'select',
+        required: true,
+        options: ['IT', 'Mechanical', 'Electronics'],
+        preRequisites: [{
+            field_label: 'education',
+            value: 'Graduate'
+        }, {
+            field_label: 'education',
+            value: 'Post-graduate',
+            logic: 'or'
+        }, {
+            field_label: 'citizenship',
+            value: 'Indian',
+            logic: 'and'
+        }]
+    }, {
+        id: 9,
+        tab: 1,
+        order: 9,
+        field_label: 'Marital Status',
+        description: '',
+        showField: false,
+        showFieldName: true,
+        showDescription: false,
+        input_type: 'radio',
+        required: false,
+        options: ['Married', 'Unmarried'],
+        preRequisites: [{
+            field_label: 'education',
+            value: '10th pass'
+        }]
+    }, {
+        id: 10,
+        tab: 1,
+        order: 5,
         field_label: 'citizenship',
         description: 'Select your education level',
         showField: true,
@@ -107,7 +199,7 @@ export const data = {
         showFieldName: false,
         showDescription: true,
         input_type: 'text',
-        required: false,
+        required: true,
         preRequisites: [{
             field_label: 'languages',
             value: 'others'
@@ -165,8 +257,10 @@ export const data = {
         showDescription: false,
         required: true,
         validation: [{
-            type: 'equals',
-            field_label: 'password'
+            key: 'value_check',
+            type: 'equal',
+            field_label: 'password',
+            error_message: 'Password does not match.'
         }]
     }]
 }
