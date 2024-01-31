@@ -25,7 +25,6 @@ export const form = {
         showDescription: true,
         input_type: 'text',
         required: true,
-        regex_validation: '^[a-zA-Z]+$',    // this is to checked runtime or on submit
         validation: [{
             key: 'regex_check',
             type: 'equal',

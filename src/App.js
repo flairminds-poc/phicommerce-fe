@@ -88,7 +88,7 @@ function App() {
 					}
 					if (v.key === 'value_check') {
 						if (v.type === 'equal') {
-							if (!(sampleData[ttf.field_label] == toCheckWithVal)) {
+							if (!(sampleData[ttf.field_label] === toCheckWithVal)) {
 								errStr.push(v.error_message)
 								thisCondition = false
 							}
