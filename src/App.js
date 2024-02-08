@@ -1,20 +1,30 @@
 import './App.css';
 import React, { useEffect, useState } from 'react';
-import { form } from './data';
 import { InputFields } from './Components/InputFields';
 import CustomButton from './Components/Elements/Button';
+import axios from 'axios';
 
 function App() {
 
 	const [sampleData, setSampleData] = useState({});
+	const [form, setForm] = useState({});
 	const [formTabs, setFormTabs] = useState([]);
 	const [tabFields, setTabFields] = useState([]);
 	const [step, setStep] = useState(1);
 	const [errors, setErrors] = useState([]);
 
 	useEffect(() => {
-		setFormTabs(form.tabs.sort((a, b) => a.order - b.order))
-		setTabFields(form.fields.sort((a, b) => a.order - b.order))
+		async function getFormData() {
+			try {
+				let response = await axios.get("http://localhost:8080/formConfigurationService/getConfiguration")
+				setForm(response.data)
+				setFormTabs(response.data.tabs.sort((a, b) => a.order - b.order))
+				// setTabFields(form.fields.sort((a, b) => a.order - b.order))
+			} catch (error) {
+				console.log(error.message)
+			}
+		}
+		getFormData()
 	}, [])
 
 	const handleOnChange = (e, f) => {
@@ -40,10 +50,6 @@ function App() {
 		setSampleData(temp)
 	}
 
-	useEffect(() => {
-		console.log(sampleData);
-	}, [sampleData])
-
 	const handleCheckboxOnChange = (e, f) => {
 		setErrors([])
 		let temp = sampleData;
@@ -60,16 +66,15 @@ function App() {
 		setSampleData(temp)
 	}
 
-	const handleOnClick = (e, t) => {
+	const handleOnClick = (e, t, index) => {
 		e.preventDefault()
 		if (errors.length > 0) return
 		let err = errors
-		const thisTabFields = tabFields.filter(f => f.tab === t.id)
+		const thisTabFields = t.fields
 		const thisTabFieldsArr = Object.keys(sampleData)
 		thisTabFields.forEach(ttf => {
-			
 			// check other validations
-			if (sampleData[ttf.field_label] && ttf.validation) {
+			if (sampleData[ttf.field_label] && ttf.validation && ttf.validation.length > 0) {
 				let nextLogical = 'and';
 				let errStr = [];
 				let conditionSatisfied = false;
@@ -86,29 +91,30 @@ function App() {
 					if (v.field_label) {
 						toCheckWithVal = sampleData[v.field_label]
 					}
+					const checkThisVal = !isNaN(sampleData[ttf.field_label]) ? parseFloat(sampleData[ttf.field_label]) : sampleData[ttf.field_label]
 					if (v.key === 'value_check') {
 						if (v.type === 'equal') {
-							if (!(sampleData[ttf.field_label] === toCheckWithVal)) {
+							if (!(checkThisVal === toCheckWithVal)) {
 								errStr.push(v.error_message)
 								thisCondition = false
 							}
 						} else if (v.type === 'greater') {
-							if (!(sampleData[ttf.field_label] > toCheckWithVal)) {
+							if (!(checkThisVal > toCheckWithVal)) {
 								errStr.push(v.error_message)
 								thisCondition = false
 							}
 						} else if (v.type === 'lesser') {
-							if (!(sampleData[ttf.field_label] < toCheckWithVal)) {
+							if (!(checkThisVal < toCheckWithVal)) {
 								errStr.push(v.error_message)
 								thisCondition = false
 							}
 						} else if (v.type === 'greater_equal') {
-							if (!(sampleData[ttf.field_label] >= toCheckWithVal)) {
+							if (!(checkThisVal >= toCheckWithVal)) {
 								errStr.push(v.error_message)
 								thisCondition = false
 							}
 						} else if (v.type === 'lesser_equal') {
-							if (!(sampleData[ttf.field_label] <= toCheckWithVal)) {
+							if (!(checkThisVal <= toCheckWithVal)) {
 								errStr.push(v.error_message)
 								thisCondition = false
 							}
@@ -118,6 +124,7 @@ function App() {
 						let regexV = new RegExp(v.value)
 						if(!regexV.test(sampleData[ttf.field_label])) {
 							err.push(v.error_message)
+							thisCondition = false
 						}
 					}
 					if (nextLogical === 'or') {
@@ -129,7 +136,7 @@ function App() {
 							conditionSatisfied = conditionSatisfied && thisCondition
 						}
 					}
-					if (j > 0) {
+					if (errStr.length > 0) {
 						let temp = errStr.join(` ${nextLogical.toLocaleUpperCase()} `)
 						errStr = []
 						errStr.push(temp)
@@ -138,14 +145,14 @@ function App() {
 				if (!conditionSatisfied) err.push(errStr[0])
 			}
 			if (ttf.required && prereqSatisfied(ttf) && !thisTabFieldsArr.includes(ttf.field_label)) {
-				err.push(`${ttf.field_label} field is required.`)
+				err.push(`'${ttf.display_name}' field is required.`)
 			}
 		})
 		setErrors([...err])
 		if (err.length > 0) {
 			return
 		}
-		setStep(t.id + 1)
+		setStep(index + 2)
 	}
 
 	const prereqSatisfied = (f) => {
@@ -175,7 +182,6 @@ function App() {
 						conditionSatisfied = conditionSatisfied && thisCondition
 					}
 				}
-				console.log("conditionSatisfied", f.field_label, p, nextLogical, thisCondition, conditionSatisfied)
 			}
 		} else {
 			conditionSatisfied = true
@@ -186,19 +192,20 @@ function App() {
 	return (
 		<div>
 			<div style={{textAlign: 'center', padding: '5px', fontWeight: 'bold'}}>
-				<div>{form.form_type}</div>
+				<div>{form.form_name}</div>
+				<div>{form.form_description}</div>
 				<div>{form.bank_name}</div>
 			</div>
 			<div style={{display: 'flex', justifyContent: 'center', alignItems: 'flex-start', minHeight: '75vh'}}>
-				{formTabs && formTabs.map(t => {
+				{formTabs && formTabs.map((t, i) => {
 					return (
 						<>
-							{step === t.id && 
+							{step === i+1 && 
 								<div style={{padding: '40px 70px', borderRadius: '5px', border: '1px solid grey', margin: '25px 0', width: '500px', minHeight: '600px'}}>
-								{t.name}
+								{t.tab_name}
 								<div style={{fontStyle: 'italic', fontSize: 'small', padding: '10px 0 0 0'}}>Fields marked with asterisk(*) are compulsory.</div>
 								<form>
-									{tabFields.filter(temp => temp.tab === t.id).map(f => {
+									{t.fields.map(f => {
 										return (
 											<>
 												{f.showField && prereqSatisfied(f) &&
@@ -222,9 +229,12 @@ function App() {
 												})}
 											</ul>
 										</div>}
-									<div style={{display: 'flex', justifyContent: 'space-between', marginTop: '25px'}}>
-										<CustomButton text={'Back'} onClick={() => {setErrors([]); setStep(t.id - 1)}} />
-										<CustomButton text={t.id === formTabs.length ? 'Submit' : 'Next'} onClick={(e) => handleOnClick(e, t)} />
+									<div style={{marginTop: '25px'}}>
+										{i > 0 &&
+										<CustomButton text={'Back'} onClick={() => {setErrors([]); setStep(i)}} />}
+										<div style={{float: 'right'}}>
+										<CustomButton text={i+1 === formTabs.length ? 'Submit' : 'Next'} onClick={(e) => handleOnClick(e, t, i)} />
+										</div>
 									</div>
 								</form>
 							</div>}

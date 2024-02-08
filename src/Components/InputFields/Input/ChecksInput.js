@@ -1,15 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 
 const ChecksInput = ({f, onChange, value = []}) => {
-    const [labelText, setLabelText] = useState("")
-
-    useEffect(() => {
-        setLabelText(f.field_label.replaceAll('_', ' ').toUpperCase())
-    }, [f.field_label])
 
     return(
         <div>
-            <div><label style={{fontSize: 'small'}}>{labelText}<span style={{color: 'red'}}>{f.required ? '*' : ''}</span></label></div>
+            <div><label style={{fontSize: 'small'}}>{f.display_name}<span style={{color: 'red'}}>{f.required ? '*' : ''}</span></label></div>
             <div>
                 {f.options.map(fo => {
                     return (
