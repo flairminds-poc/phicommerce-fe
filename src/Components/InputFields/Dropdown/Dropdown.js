@@ -1,17 +1,12 @@
 import React, { useEffect, useState } from "react";
 
 const CustomDropdown = ({f, onChange, value = ''}) => {
-    const [labelText, setLabelText] = useState("")
-
-    useEffect(() => {
-        setLabelText(f.field_label.replaceAll('_', ' ').toUpperCase())
-    }, [f.field_label])
 
     return(
         <div>
             <div>
                 {f.showFieldName &&
-                    <label style={{fontSize: 'small'}} for={f.field_label}>{labelText}</label>}
+                    <label style={{fontSize: 'small'}} for={f.label_name}>{f.display_name}<span style={{color: 'red'}}>{f.required ? '*' : ''}</span></label>}
             </div>
             <div>
                 {f.showDescription &&

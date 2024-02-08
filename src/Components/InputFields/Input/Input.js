@@ -6,7 +6,7 @@ const CustomInput = ({f, onChange, value = ''}) => {
         <div>
             {f.showFieldName &&
                 <div>
-                    <label style={{fontSize: 'small'}}>{f.display_name}<span style={{color: 'red'}}>{f.required ? '*' : ''}</span></label>
+                    <label style={{fontSize: 'small'}} for={f.label_name}>{f.display_name}<span style={{color: 'red'}}>{f.required ? '*' : ''}</span></label>
                 </div>}
             <div>
                 {f.showDescription &&

@@ -4,7 +4,7 @@ const ChecksInput = ({f, onChange, value = []}) => {
 
     return(
         <div>
-            <div><label style={{fontSize: 'small'}}>{f.display_name}<span style={{color: 'red'}}>{f.required ? '*' : ''}</span></label></div>
+            <div><label style={{fontSize: 'small'}} for={f.label_name}>{f.display_name}<span style={{color: 'red'}}>{f.required ? '*' : ''}</span></label></div>
             <div>
                 {f.options.map(fo => {
                     return (

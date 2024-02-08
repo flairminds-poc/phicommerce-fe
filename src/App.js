@@ -190,52 +190,53 @@ function App() {
 
 	return (
 		<div>
-			<div style={{textAlign: 'center', padding: '5px', fontWeight: 'bold'}}>
-				<div>{form.form_name}</div>
-				<div>{form.form_description}</div>
-				<div>{form.bank_name}</div>
+			<div style={{textAlign: 'center', backgroundColor: '#EBEDF4', padding: '1%'}}>
+				<div style={{fontSize: 'large', fontWeight: 'bold'}}>{form.bank_name?.toLocaleUpperCase()} - {form.form_name?.toLocaleUpperCase()}</div>
+				<div style={{fontStyle: 'italic'}}>{form.form_description}</div>
 			</div>
 			<div style={{display: 'flex', justifyContent: 'center', alignItems: 'flex-start', minHeight: '75vh'}}>
 				{formTabs && formTabs.map((t, i) => {
 					return (
 						<>
 							{step === i+1 && 
-								<div style={{padding: '40px 70px', borderRadius: '5px', border: '1px solid grey', margin: '25px 0', width: '500px', minHeight: '600px'}}>
-								{t.tab_name}
-								<div style={{fontStyle: 'italic', fontSize: 'small', padding: '10px 0 0 0'}}>Fields marked with asterisk(*) are compulsory.</div>
-								<form>
-									{t.fields.map(f => {
-										return (
-											<>
-												{f.showField && prereqSatisfied(f) &&
-													<div style={{margin: '10px 0'}}>
-														{f.input_type === 'checkbox' && <InputFields.CheckboxInput f={f} onChange={handleCheckboxOnChange} value={sampleData[f.field_label]} />}
-														{f.input_type === 'radio' && <InputFields.RadioInput f={f} onChange={handleOnChange} value={sampleData[f.field_label]} />}
-														{f.input_type === 'text' && <InputFields.TextInput f={f} onChange={handleOnChange} value={sampleData[f.field_label]} />}
-														{f.input_type === 'password' && <InputFields.PasswordInput f={f} onChange={handleOnChange} value={sampleData[f.field_label]} />}
-														{f.input_type === 'select' && <InputFields.Dropdown f={f} onChange={handleOnChange} value={sampleData[f.field_label]} />}
-													</div>}
-											</>
-										)
-									})}
-									{errors && errors.length > 0 &&
-										<div style={{color: 'red'}}>
-											<ul>
-												{errors.map(e => {
-													return (
-														<li>{e}</li>
-													)
-												})}
-											</ul>
-										</div>}
-									<div style={{marginTop: '25px'}}>
-										{i > 0 &&
-										<CustomButton text={'Back'} onClick={() => {setErrors([]); setStep(i)}} />}
-										<div style={{float: 'right'}}>
-										<CustomButton text={i+1 === formTabs.length ? 'Submit' : 'Next'} onClick={(e) => handleOnClick(e, t, i)} />
+								<div style={{padding: '40px', borderRadius: '5px', border: '1px solid grey', margin: '25px 0', width: '600px'}}>
+								<div style={{backgroundColor: 'greenyellow', padding: '1% 2%', borderRadius: '5px'}}>{i+1}. {t.tab_name}</div>
+								<div style={{padding: '0 15px'}}>
+									<div style={{fontStyle: 'italic', fontSize: 'small', padding: '5px 0'}}>Mandatory fields are marked with asterisk(*).</div>
+									<form>
+										{t.fields.map(f => {
+											return (
+												<>
+													{f.showField && prereqSatisfied(f) &&
+														<div style={{margin: '10px 0'}}>
+															{f.input_type === 'checkbox' && <InputFields.CheckboxInput f={f} onChange={handleCheckboxOnChange} value={sampleData[f.field_label]} />}
+															{f.input_type === 'radio' && <InputFields.RadioInput f={f} onChange={handleOnChange} value={sampleData[f.field_label]} />}
+															{f.input_type === 'text' && <InputFields.TextInput f={f} onChange={handleOnChange} value={sampleData[f.field_label]} />}
+															{f.input_type === 'password' && <InputFields.PasswordInput f={f} onChange={handleOnChange} value={sampleData[f.field_label]} />}
+															{f.input_type === 'select' && <InputFields.Dropdown f={f} onChange={handleOnChange} value={sampleData[f.field_label]} />}
+														</div>}
+												</>
+											)
+										})}
+										{errors && errors.length > 0 &&
+											<div style={{color: 'red'}}>
+												<ul>
+													{errors.map(e => {
+														return (
+															<li>{e}</li>
+														)
+													})}
+												</ul>
+											</div>}
+										<div style={{marginTop: '25px'}}>
+											{i > 0 &&
+											<CustomButton text={'Back'} onClick={() => {setErrors([]); setStep(i)}} />}
+											<div style={{float: 'right'}}>
+											<CustomButton text={i+1 === formTabs.length ? 'Submit' : 'Next'} onClick={(e) => handleOnClick(e, t, i)} />
+											</div>
 										</div>
-									</div>
-								</form>
+									</form>
+								</div>
 							</div>}
 						</>
 					)
