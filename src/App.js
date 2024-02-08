@@ -9,7 +9,6 @@ function App() {
 	const [sampleData, setSampleData] = useState({});
 	const [form, setForm] = useState({});
 	const [formTabs, setFormTabs] = useState([]);
-	const [tabFields, setTabFields] = useState([]);
 	const [step, setStep] = useState(1);
 	const [errors, setErrors] = useState([]);
 
