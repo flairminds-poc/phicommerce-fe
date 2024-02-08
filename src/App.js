@@ -151,7 +151,12 @@ function App() {
 		if (err.length > 0) {
 			return
 		}
-		setStep(index + 2)
+		if (index + 1 === formTabs.length) {
+			alert('Data saved successfully.')
+			window.location.reload()
+		} else {
+			setStep(index + 2)
+		}
 	}
 
 	const prereqSatisfied = (f) => {
